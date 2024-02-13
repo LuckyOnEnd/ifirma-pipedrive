@@ -118,6 +118,7 @@ def create_invoice(data):
 
         print("try send")
         response = requests.post(url, data=json_content.encode('utf-8'), headers=headers)
+        print("sended")
         data_response = response.json()
         result = data_response['response']
         if result["Kod"] == 0:
