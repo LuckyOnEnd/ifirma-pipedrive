@@ -205,4 +205,5 @@ while True:
             create_new_invoice(product_to_create_invoice)
     except Exception as ex:
         print(ex.args)
+        time.sleep(100)
         continue
