@@ -79,7 +79,7 @@ def send_mail(email, invoice_number, invoice_nr, price, freightInsure, freight, 
         "Tekst": email_content,
         "SkrzynkaEmail": "app@spautomotive.pl",
         "SzablonEmail": "Pusty",
-        "SkrzynkaEmailOdbiorcy": "trusviacheslav@gmail.com"
+        "SkrzynkaEmailOdbiorcy": email
     }
 
     json_content = json.dumps(data, ensure_ascii=False)
@@ -142,8 +142,7 @@ def create_new_invoice(products):
                 ulica = product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91"].split(",")[0]
         else:
             ulica = f'{product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_route"]} {product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_street_number"]}'
-        #if product['5f784ebfd4428d6e26e2af34d67b268f6b22ca0f'] == "45":
-        if product != None:
+        if product['5f784ebfd4428d6e26e2af34d67b268f6b22ca0f'] == "45":
             invoice_model = {
                 "TypSprzedazy": "KRAJOWA",
                 "ZaplaconoNaDokumencie": 0,
@@ -185,10 +184,8 @@ def create_new_invoice(products):
             #status, new_invoice = create_invoice(invoice_model)
             #if status == 0:
             print("send")
-            time.sleep(1)
             invoice_nr, price = get_invoice_by_id(1195697)
             send_mail(product["person_id"]["email"][0]["value"], 1195697, invoice_nr, price, product['10cb2dd06a7a60d9d9e19bd3819a6569ffb208c1'], product['5073621992b2b327ea4ca4733833c97af8aadc4e'],product['199cc63d9c8efe4d49249d9a7e97318015d8cb10'], product['4f14897cef15702d7cf7583bea70e89bafa36646'])
-            time.sleep(100)
             print("done")
             #pipedrive_service.mark_as_sent(product["id"])
 
@@ -204,5 +201,5 @@ while True:
             create_new_invoice(product_to_create_invoice)
     except Exception as ex:
         print(ex.args)
-        time.sleep(100)
+        time.sleep(10)
         continue
