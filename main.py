@@ -197,17 +197,15 @@ def create_new_invoice(products):
 while True:
     try:
         time.sleep(20)
-        print("get data start")
         product_to_create_invoice = pipeservice.get_data()
-        print("get data finished")
 
-        print("get currency started")
-        response = requests.get("https://open.er-api.com/v6/latest/USD")
-        response.raise_for_status()
-        responseObject = response.json()
-        currency = responseObject['rates']['PLN']
-        print("get currency finished")
         if len(product_to_create_invoice) > 0:
+            print("get currency started")
+            response = requests.get("https://open.er-api.com/v6/latest/USD")
+            response.raise_for_status()
+            responseObject = response.json()
+            currency = responseObject['rates']['PLN']
+            print("get currency finished")
             create_new_invoice(product_to_create_invoice)
     except Exception as ex:
         print(ex.args)
