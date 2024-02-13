@@ -184,8 +184,8 @@ def create_new_invoice(products):
             status, new_invoice = create_invoice(invoice_model)
             if status == 0:
                 print("send")
-                invoice_nr, price = get_invoice_by_id(1195697)
-                send_mail(product["person_id"]["email"][0]["value"], 1195697, invoice_nr, price, product['10cb2dd06a7a60d9d9e19bd3819a6569ffb208c1'], product['5073621992b2b327ea4ca4733833c97af8aadc4e'],product['199cc63d9c8efe4d49249d9a7e97318015d8cb10'], product['4f14897cef15702d7cf7583bea70e89bafa36646'])
+                invoice_nr, price = get_invoice_by_id(new_invoice)
+                send_mail(product["person_id"]["email"][0]["value"], new_invoice, invoice_nr, price, product['10cb2dd06a7a60d9d9e19bd3819a6569ffb208c1'], product['5073621992b2b327ea4ca4733833c97af8aadc4e'],product['199cc63d9c8efe4d49249d9a7e97318015d8cb10'], product['4f14897cef15702d7cf7583bea70e89bafa36646'])
                 print("done")
                 pipedrive_service.mark_as_sent(product["id"])
 
