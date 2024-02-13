@@ -5,7 +5,6 @@ from datetime import datetime
 import requests
 
 import pipedrive_service
-from models import Faktura
 
 pipeservice = pipedrive_service
 
