@@ -29,5 +29,7 @@ def mark_as_sent(id):
         "5f784ebfd4428d6e26e2af34d67b268f6b22ca0f": "Wysłana"
     }
 
+    print(f"mark as sent reuqest {id}")
     response = requests.put(uri, json=data)
+    print(f"mark as sent success {id}")
     return response

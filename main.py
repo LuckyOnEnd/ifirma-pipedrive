@@ -31,10 +31,14 @@ def get_invoice_by_id(id):
         'Content-type': 'application/json; charset=UTF-8',
         'Authentication': f"IAPIS user={username}, hmac-sha1={hashWiadomosci}"
     }
+
+    print("get invoice by id reuqest send")
     response = requests.get(f"{url}?dataOd={datetime.now().strftime('2024-02-12')}", headers=headers)
+    print("get invoice by id reuqest success")
     data = response.json()
     for invoice in data['response']['Wynik']:
         if invoice['FakturaId'] == id:
+            print("get invoice by id , invoice found")
             return invoice['PelnyNumer'], invoice['Brutto']
 
     return None, None
@@ -95,8 +99,9 @@ def send_mail(email, invoice_number, invoice_nr, price, freightInsure, freight, 
         'Authentication': f"IAPIS user={username}, hmac-sha1={hashWiadomosci}"
     }
 
-    response = requests.post(url, data=json_content.encode('utf-8'), headers=headers)
-    jsonResponse = response.text
+    print(f"send email {invoice_number} {invoice_nr}")
+    requests.post(url, data=json_content.encode('utf-8'), headers=headers)
+    print(f"send email success {invoice_number} {invoice_nr}")
 
 def create_invoice(data):
     try:
@@ -115,15 +120,17 @@ def create_invoice(data):
             'Authentication': f"IAPIS user={username}, hmac-sha1={hashWiadomosci}"
         }
 
-        print("try send")
+        print("create invoce post")
         response = requests.post(url, data=json_content.encode('utf-8'), headers=headers)
-        print("sended")
+        print("create invoce send")
         data_response = response.json()
         result = data_response['response']
         if result["Kod"] == 0:
             identyficator = result["Identyfikator"]
+            print(f"create invoce identyfikator {identyficator}")
             return 0, (int)(identyficator)
         else:
+            print(f"create invoce error")
             return 500, 0
     except Exception as e:
         return 500, 0
@@ -183,10 +190,8 @@ def create_new_invoice(products):
             }
             status, new_invoice = create_invoice(invoice_model)
             if status == 0:
-                print("send")
                 invoice_nr, price = get_invoice_by_id(new_invoice)
                 send_mail(product["person_id"]["email"][0]["value"], new_invoice, invoice_nr, price, product['10cb2dd06a7a60d9d9e19bd3819a6569ffb208c1'], product['5073621992b2b327ea4ca4733833c97af8aadc4e'],product['199cc63d9c8efe4d49249d9a7e97318015d8cb10'], product['4f14897cef15702d7cf7583bea70e89bafa36646'])
-                print("done")
                 pipedrive_service.mark_as_sent(product["id"])
 
 while True:
