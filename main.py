@@ -185,6 +185,7 @@ def create_new_invoice(products):
                     "Miejscowosc": product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_locality"],
                 }
             }
+            print("create invoice")
             status, new_invoice = create_invoice(invoice_model)
             if status == 0:
                 invoice_nr, price = get_invoice_by_id(new_invoice)
