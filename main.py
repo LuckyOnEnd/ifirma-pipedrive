@@ -1,9 +1,7 @@
 import json
 import time
 from datetime import datetime
-
 import requests
-
 import pipedrive_service
 
 pipeservice = pipedrive_service
@@ -143,8 +141,7 @@ def create_new_invoice(products):
         else:
             nip = product['e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_subpremise']
         ulica = ""
-        if product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_route"] == None and product[
-            "e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_street_number"] == None:
+        if product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_route"] == None and product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_street_number"] == None:
             if product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91"] != None:
                 ulica = product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91"].split(",")[0]
         else:

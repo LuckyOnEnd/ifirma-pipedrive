@@ -4,7 +4,7 @@ from typing import Optional, List
 import requests
 
 api_token = "7519a95a31dc3cbc342b55d742201075c38f533b"
-url = f"https://api.pipedrive.com/v1/deals?api_token={api_token}&sort=id DESC&limit=20"
+url = f"https://api.pipedrive.com/v1/deals?api_token={api_token}&sort=id DESC&limit=500"
 
 
 headers = {
