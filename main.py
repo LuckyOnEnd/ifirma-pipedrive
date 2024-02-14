@@ -100,7 +100,7 @@ def send_mail(email, invoice_number, invoice_nr, price, freightInsure, freight, 
     print(f"send email {invoice_number} {invoice_nr}")
     requests.post(url, data=json_content.encode('utf-8'), headers=headers)
     print(f"send email success {invoice_number} {invoice_nr}")
-
+#s
 def create_invoice(data):
     try:
         username = "nikodem.pawlowski@me.com"
