@@ -227,7 +227,7 @@ def create_new_invoice(products):
                 "Pozycje": [
                     {
                         "Ilosc": 1,
-                        "CenaJednostkowa": product['463274f945608f73a35db47670b946186f723386'],
+                        "CenaJednostkowa": product['cd515a5b699d2f76e1d2df06068c5ada9c28df5e'],
                         "NazwaPelna": f"Prowizja za organizacje importu pojazdu z USA: {product['title']}",
                         "Jednostka": "szt.",
                     }
@@ -294,7 +294,7 @@ def create_new_invoice(products):
 
 while True:
     try:
-        time.sleep(20)
+        #time.sleep(20)
         product_to_create_invoice = pipeservice.get_data()
 
         if len(product_to_create_invoice) > 0:
