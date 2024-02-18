@@ -41,6 +41,40 @@ def get_invoice_by_id(id):
 
     return None, None
 
+
+def send_mail_country(email, invoice_number):
+    email_url = "https://www.ifirma.pl/iapi/rachunekkraj/send"
+    username = "MICHAL@SPAUTOMOTIVE.PL"
+    api_token = "0FB0456A7BD7B3A4"
+
+    url = f"{email_url}/{invoice_number}.json?wyslijEfaktura=true"
+
+    data = {
+        "Tekst": " ",
+        "SkrzynkaEmail": "app@spautomotive.pl",
+        "SzablonEmail": "Rachunek prowizja",
+        "SkrzynkaEmailOdbiorcy": email
+    }
+
+    json_content = json.dumps(data, ensure_ascii=False)
+
+    base_url = url.split("?")[0]
+    sign_data = f"{base_url}{username}rachunek{json_content or ''}"
+
+    hashWiadomosci = sign_raw(sign_data, api_token)
+
+    headers = {
+        'Accept': 'application/json',
+        'Content-type': 'application/json; charset=UTF-8',
+        'Authentication': f"IAPIS user={username}, hmac-sha1={hashWiadomosci}"
+    }
+
+    print(f"send email {invoice_number}")
+    response = requests.post(url, data=json_content.encode('utf-8'), headers=headers)
+    data_response = response.json()
+    print(f"send email success {invoice_number}")
+
+
 def send_mail(email, invoice_number, invoice_nr, price, freightInsure, freight, broker, last_price):
     template = """
     Dzień dobry,
@@ -100,7 +134,39 @@ def send_mail(email, invoice_number, invoice_nr, price, freightInsure, freight, 
     print(f"send email {invoice_number} {invoice_nr}")
     requests.post(url, data=json_content.encode('utf-8'), headers=headers)
     print(f"send email success {invoice_number} {invoice_nr}")
-#s
+
+def create_country_invoice(data):
+    try:
+        username = "MICHAL@SPAUTOMOTIVE.PL"
+        api_token = "0FB0456A7BD7B3A4"
+        url = "https://www.ifirma.pl/iapi/rachunekkraj.json"
+
+        json_content = json.dumps(data, ensure_ascii=False)
+        sign_data = f"{url}{username}rachunek{json_content or ''}"
+
+        hashWiadomosci = sign_raw(sign_data, api_token)
+
+        headers = {
+            'Accept': 'application/json',
+            'Content-type': 'application/json; charset=UTF-8',
+            'Authentication': f"IAPIS user={username}, hmac-sha1={hashWiadomosci}"
+        }
+
+        print("create invoce post")
+        response = requests.post(url, data=json_content.encode('utf-8'), headers=headers)
+        print("create invoce send")
+        data_response = response.json()
+        result = data_response['response']
+        if result["Kod"] == 0:
+            identyficator = result["Identyfikator"]
+            print(f"create invoce identyfikator {identyficator}")
+            return 0, (int)(identyficator)
+        else:
+            print(f"create invoce error")
+            return 500, 0
+    except Exception as e:
+        return 500, 0
+
 def create_invoice(data):
     try:
         username = "nikodem.pawlowski@me.com"
@@ -146,6 +212,40 @@ def create_new_invoice(products):
                 ulica = product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91"].split(",")[0]
         else:
             ulica = f'{product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_route"]} {product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_street_number"]}'
+
+        if product['6b12c94620ef88cea439f652fc648e4b5036ef2f'] == "46":
+            invoice_model = {
+                "Zaplacono": 0,
+                "NumerKontaBankowego": "40102052420000240204694057",
+                "DataWystawienia": datetime.now().strftime("%Y-%m-%d"),
+                "MiejsceWystawienia": "WROCŁAW",
+                "DataSprzedazy": datetime.now().strftime("%Y-%m-%d"),
+                "FormatDatySprzedazy": "DZN",
+                "SposobZaplaty": "PRZ",
+                "WpisDoKpir": "NIE",
+                "Numer": None,
+                "Pozycje": [
+                    {
+                        "Ilosc": 1,
+                        "CenaJednostkowa": product['463274f945608f73a35db47670b946186f723386'],
+                        "NazwaPelna": f"Prowizja za organizacje importu pojazdu z USA: {product['title']}",
+                        "Jednostka": "szt.",
+                    }
+                ],
+                "Kontrahent": {
+                    "Nazwa": product['8edef253a2dab4c978cca356b4ca689b8d089634'],
+                    "Ulica": ulica,
+                    "KodPocztowy": product['e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_postal_code'],
+                    "Kraj": product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_country"],
+                    "Miejscowosc": product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_locality"],
+                    "Email": product["person_id"]["email"][0]["value"]
+                }
+            }
+            status, new_invoice = create_country_invoice(invoice_model)
+            if status == 0:
+                send_mail_country(product["person_id"]["email"][0]["value"], new_invoice)
+                pipedrive_service.mark_as_sent(product["id"])
+
         if product['5f784ebfd4428d6e26e2af34d67b268f6b22ca0f'] == "45":
             invoice_model = {
                 "TypSprzedazy": "KRAJOWA",
