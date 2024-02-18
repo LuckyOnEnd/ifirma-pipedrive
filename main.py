@@ -244,7 +244,7 @@ def create_new_invoice(products):
             status, new_invoice = create_country_invoice(invoice_model)
             if status == 0:
                 send_mail_country(product["person_id"]["email"][0]["value"], new_invoice)
-                pipedrive_service.mark_as_sent(product["id"])
+                pipedrive_service.mark_as_sent_country(product["id"])
 
         if product['5f784ebfd4428d6e26e2af34d67b268f6b22ca0f'] == "45":
             invoice_model = {
