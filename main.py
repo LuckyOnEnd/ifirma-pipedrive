@@ -206,6 +206,12 @@ def create_new_invoice(products):
             nip = ""
         else:
             nip = product['e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_subpremise']
+        city = ""
+        if product['e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_locality'] == None:
+            if product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91"] != None:
+                city = product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91"].split(",")[2]
+        else:
+            city = product['e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_locality']
         ulica = ""
         if product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_route"] == None and product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_street_number"] == None:
             if product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91"] != None:
@@ -237,7 +243,7 @@ def create_new_invoice(products):
                     "Ulica": ulica,
                     "KodPocztowy": product['e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_postal_code'],
                     "Kraj": product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_country"],
-                    "Miejscowosc": product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_locality"],
+                    "Miejscowosc": city,
                     "Email": product["person_id"]["email"][0]["value"]
                 }
             }
@@ -282,7 +288,7 @@ def create_new_invoice(products):
                     "Ulica": ulica,
                     "KodPocztowy": product['e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_postal_code'],
                     "Kraj": product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_country"],
-                    "Miejscowosc": product["e134f8360b17a18963ca6ea8cfaa7e0b156b7f91_locality"],
+                    "Miejscowosc": city,
                 }
             }
             print("create invoice")
@@ -294,7 +300,7 @@ def create_new_invoice(products):
 
 while True:
     try:
-        #time.sleep(20)
+        time.sleep(20)
         product_to_create_invoice = pipeservice.get_data()
 
         if len(product_to_create_invoice) > 0:
