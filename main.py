@@ -31,7 +31,7 @@ def get_invoice_by_id(id):
     }
 
     print("get invoice by id reuqest send")
-    response = requests.get(f"{url}?dataOd={datetime.now().strftime('2024-02-12')}", headers=headers)
+    response = requests.get(f"{url}?dataOd={datetime.now().strftime('2024-04-01')}", headers=headers)
     print("get invoice by id reuqest success")
     data = response.json()
     for invoice in data['response']['Wynik']:
