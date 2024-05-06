@@ -79,7 +79,7 @@ def send_mail(email, invoice_number, invoice_nr, price, freightInsure, freight, 
     template = """
     Dzień dobry,
 
-    W załączniku znajduje się faktura {numer_faktury} za fracht morski na kwotę {kwota} USD.
+    W załączniku znajduje się faktura za fracht morski.
 
     Faktura zawiera:
     Usługa brokera: {usluga_brokera}
