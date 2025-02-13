@@ -302,7 +302,7 @@ while True:
     try:
         time.sleep(20)
         product_to_create_invoice = pipeservice.get_data()
-        print(f"products to create invoice {product_to_create_invoice}")
+        print(f"products to create invoice {len(product_to_create_invoice)}")
 
         if len(product_to_create_invoice) > 0:
             print("get currency started")
