@@ -297,6 +297,8 @@ while True:
             responseObject = response.json()
             currency = responseObject['rates']['PLN']
             create_new_invoice(product_to_create_invoice)
+        else:
+            print("New invoices not found")
     except Exception as ex:
         print(ex.args)
         time.sleep(10)
