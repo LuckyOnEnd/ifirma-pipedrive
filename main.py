@@ -5,8 +5,10 @@ import requests
 import pipedrive_service
 
 pipeservice = pipedrive_service
-print(f"System started")
 
+import logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(message)s', handlers=[logging.StreamHandler()])
+logging.debug("System started")
 
 def sign_raw(data, key):
     import hmac
@@ -154,7 +156,7 @@ def create_country_invoice(data):
             identyficator = result["Identyfikator"]
             return 0, (int)(identyficator)
         else:
-            print(f"Problem pod czas stworzenia faktury: {result["Informacja"]}")
+            logging.debug(f"Problem pod czas stworzenia faktury: {result["Informacja"]}")
             return 500, 0
     except Exception as e:
         return 500, 0
@@ -183,7 +185,7 @@ def create_invoice(data):
             identyficator = result["Identyfikator"]
             return 0, (int)(identyficator)
         else:
-            print(f"Problem pod czas stworzenia faktury: {result["Informacja"]}")
+            logging.debug(f"Problem pod czas stworzenia faktury: {result["Informacja"]}")
             return 500, 0
     except Exception as e:
         return 500, 0
@@ -298,8 +300,8 @@ while True:
             currency = responseObject['rates']['PLN']
             create_new_invoice(product_to_create_invoice)
         else:
-            print("New invoices not found")
+            logging.debug("New invoices not found")
     except Exception as ex:
-        print(ex.args)
+        logging.debug(ex.args)
         time.sleep(10)
         continue
