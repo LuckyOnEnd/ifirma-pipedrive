@@ -5,6 +5,8 @@ import requests
 import pipedrive_service
 
 pipeservice = pipedrive_service
+print(f"System started")
+
 
 def sign_raw(data, key):
     import hmac
@@ -30,13 +32,10 @@ def get_invoice_by_id(id):
         'Authentication': f"IAPIS user={username}, hmac-sha1={hashWiadomosci}"
     }
 
-    print("get invoice by id reuqest send")
     response = requests.get(f"{url}?dataOd={datetime.now().strftime('2024-04-01')}", headers=headers)
-    print("get invoice by id reuqest success")
     data = response.json()
     for invoice in data['response']['Wynik']:
         if invoice['FakturaId'] == id:
-            print("get invoice by id , invoice found")
             return invoice['PelnyNumer'], invoice['Brutto']
 
     return None, None
@@ -69,10 +68,8 @@ def send_mail_country(email, invoice_number):
         'Authentication': f"IAPIS user={username}, hmac-sha1={hashWiadomosci}"
     }
 
-    print(f"send email {invoice_number}")
     response = requests.post(url, data=json_content.encode('utf-8'), headers=headers)
     data_response = response.json()
-    print(f"send email success {invoice_number}")
 
 
 def send_mail(email, invoice_number, invoice_nr, price, freightInsure, freight, broker, last_price):
@@ -131,9 +128,7 @@ def send_mail(email, invoice_number, invoice_nr, price, freightInsure, freight, 
         'Authentication': f"IAPIS user={username}, hmac-sha1={hashWiadomosci}"
     }
 
-    print(f"send email {invoice_number} {invoice_nr}")
     requests.post(url, data=json_content.encode('utf-8'), headers=headers)
-    print(f"send email success {invoice_number} {invoice_nr}")
 
 def create_country_invoice(data):
     try:
@@ -152,17 +147,14 @@ def create_country_invoice(data):
             'Authentication': f"IAPIS user={username}, hmac-sha1={hashWiadomosci}"
         }
 
-        print("create invoce post")
         response = requests.post(url, data=json_content.encode('utf-8'), headers=headers)
-        print("create invoce send")
         data_response = response.json()
         result = data_response['response']
         if result["Kod"] == 0:
             identyficator = result["Identyfikator"]
-            print(f"create invoce identyfikator {identyficator}")
             return 0, (int)(identyficator)
         else:
-            print(f"create invoce error")
+            print(f"Problem pod czas stworzenia faktury: {result["Informacja"]}")
             return 500, 0
     except Exception as e:
         return 500, 0
@@ -184,17 +176,14 @@ def create_invoice(data):
             'Authentication': f"IAPIS user={username}, hmac-sha1={hashWiadomosci}"
         }
 
-        print("create invoce post")
         response = requests.post(url, data=json_content.encode('utf-8'), headers=headers)
-        print("create invoce send")
         data_response = response.json()
         result = data_response['response']
         if result["Kod"] == 0:
             identyficator = result["Identyfikator"]
-            print(f"create invoce identyfikator {identyficator}")
             return 0, (int)(identyficator)
         else:
-            print(f"create invoce error")
+            print(f"Problem pod czas stworzenia faktury: {result["Informacja"]}")
             return 500, 0
     except Exception as e:
         return 500, 0
@@ -291,7 +280,6 @@ def create_new_invoice(products):
                     "Miejscowosc": city,
                 }
             }
-            print("create invoice")
             status, new_invoice = create_invoice(invoice_model)
             if status == 0:
                 invoice_nr, price = get_invoice_by_id(new_invoice)
@@ -302,15 +290,12 @@ while True:
     try:
         time.sleep(20)
         product_to_create_invoice = pipeservice.get_data()
-        print(f"products to create invoice {len(product_to_create_invoice)}")
 
         if len(product_to_create_invoice) > 0:
-            print("get currency started")
             response = requests.get("https://open.er-api.com/v6/latest/USD")
             response.raise_for_status()
             responseObject = response.json()
             currency = responseObject['rates']['PLN']
-            print("get currency finished")
             create_new_invoice(product_to_create_invoice)
     except Exception as ex:
         print(ex.args)
